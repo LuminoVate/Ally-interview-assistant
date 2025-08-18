@@ -75,12 +75,31 @@ const Agent = ({ userName,userId,type }: AgentProps) => {
     };
   }, [])
 
-  useEffect(()=>{
 
-    if(callStatus === CallStatus.FINISHED) {
-     router.push(`/`);
+  useEffect(() => {
+    const saveTranscript = async () => {
+      if (callStatus === CallStatus.FINISHED && messages.length > 0) {
+        try {
+          // await fetch("/api/vapi/generate", {
+          //   method: "POST",
+          //   headers: { "Content-Type": "application/json" },
+          //   body: JSON.stringify({
+          //     type,
+          //     userid: userId,
+          //     transcript: messages,
+          //   }),
+          // });
+          console.log(messages);
+        } catch (e) {
+          // Optionally handle error
+        }
+      }
+    };
+    saveTranscript();
+    if (callStatus === CallStatus.FINISHED) {
+      router.push(`/`);
     }
-  },[messages,callStatus,type,userId])
+  }, [messages, callStatus, type, userId]);
 
     const handleCall = async () => {
       setCallStatus(CallStatus.CONNECTING);
@@ -93,17 +112,20 @@ const Agent = ({ userName,userId,type }: AgentProps) => {
             }
           }
         );
+        // Do not setCallStatus(ACTIVE) here; rely on call-start event
       } catch (error) {
         setCallStatus(CallStatus.INACTIVE);
         console.error("Failed to start call:", error);
       }
     }
-    const handleDisconnect=()=>{
+    const handleDisconnect = () => {
+      setIsSpeaking(false);
       setCallStatus(CallStatus.FINISHED);
       vapi.stop();
     }
     const latestMessage = messages[messages.length - 1]?.content;
-    const isCallInactiveOrFinished = callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED;
+  const isCallInactiveOrFinished = callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED;
+  const isCallConnecting = callStatus === CallStatus.CONNECTING;
 
   return (
     <>
@@ -145,11 +167,16 @@ const Agent = ({ userName,userId,type }: AgentProps) => {
 
       <div className="w-full flex justify-center">
         {callStatus !== "ACTIVE" ? (
-          <button className="btn-call relative" onClick={handleCall}>
+          <button
+            className="btn-call relative"
+            onClick={handleCall}
+            disabled={isCallConnecting}
+            aria-disabled={isCallConnecting}
+          >
             <span
               className={cn(
                 `absolute animate-ping rounded-full opacity-75`,
-                callStatus !== "CONNECTING" && "hidden"
+                !isCallConnecting && "hidden"
               )}
             />
             <span>

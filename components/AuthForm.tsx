@@ -5,36 +5,53 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import Image from "next/image";
+import Link from "next/link";
+import { toast } from "sonner";
+import FormField from "./FormField";
+import { useRouter } from "next/navigation";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-});
+const authFormSchema = (type: FormType) => {
+  return z.object({
+    name:
+      type === "sign-up" ? z.string().min(2).max(100) : z.string().optional(),
+    email: z.string().min(5).max(100).email(),
+    password: z.string().min(8).max(100),
+  });
+};
 
-const AuthForm = ({ type }: { type: "sign-in" | "sign-up" }) => {
+const AuthForm = ({ type }: { type: FormType }) => {
+  const formSchema = authFormSchema(type);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      name: "",
+      email: "",
+      password: "",
     },
   });
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    try {
+      if (isSignIn) {
+        toast.success("Logged in successfully");
+        console.log("sign in", values);
+        router.push("/");
+      } else {
+        toast.success("Account created successfully , Please log in");
+        router.push("/sign-in");
+        console.log("sign up", values);
+      }
+    } catch (e) {
+      toast.error("Something went wrong");
+    } finally {
+    }
   }
 
-  const issignIn = type === "sign-in";
+  const isSignIn = type === "sign-in";
 
   return (
     <div className="card-border lg:min-w-[556px]">
@@ -49,11 +66,42 @@ const AuthForm = ({ type }: { type: "sign-in" | "sign-up" }) => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="w-full space-y-6 mt-4 form"
           >
-            {}
-            <Button className="cursor-pointer" type="submit">
-              Submit
+            {!isSignIn && (
+              <FormField
+                name="name"
+                control={form.control}
+                label="Name"
+                type="text"
+                placeholder="Enter your name"
+              />
+            )}
+            <FormField
+              name="email"
+              control={form.control}
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+            />
+            <FormField
+              name="password"
+              control={form.control}
+              label="Password"
+              placeholder="Enter your password"
+              type="password"
+            />
+
+            <Button className="btn cursor-pointer" type="submit">
+              {isSignIn ? "Sign In " : "Create an Account "}
             </Button>
           </form>
+          <p className="text-center">
+            {isSignIn
+              ? " Already have an account? "
+              : " Don't have an account? "}
+            <Link href={isSignIn ? "/sign-up" : "/sign-in"}>
+              {isSignIn ? " Register" : " Login"}
+            </Link>
+          </p>
         </Form>
       </div>
     </div>

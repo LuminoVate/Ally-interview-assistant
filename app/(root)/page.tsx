@@ -55,23 +55,6 @@ const page = async () => {
             <p className="">You haven't taken any interviews yet.</p>
           )}
         </div>
-
-        {/* <p className="">You haven't taken any interviews yet.</p> */}
-      </section>
-
-      <section className="flex flex-col gap-6 mt-8">
-        <h2>Take an Interview</h2>
-        <div className="interview-section">
-          <div className="interview-section grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {hasLatestInterviews ? (
-              allInterviews?.map((interview) => (
-                <InterviewCard {...interview} key={interview.id} />
-              ))
-            ) : (
-              <p>No latest interviews available.</p>
-            )}
-          </div>
-        </div>
       </section>
     </>
   );

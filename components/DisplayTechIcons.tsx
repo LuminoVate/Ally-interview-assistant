@@ -11,7 +11,7 @@ async function DisplayTechIcons({ techStack }: TechIconProps) {
         <div key={tech}>
           <span className="tech-tooltip">{tech}</span>
           <Image
-            className="relative group bg-dark-200 rounded-full p-2 flex-center"
+            className={`relative group bg-dark-200 rounded-full p-2 flex-center`}
             src={url}
             alt={tech}
             width={40}

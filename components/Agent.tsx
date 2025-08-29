@@ -83,15 +83,15 @@ const Agent = ({ userName, userId, type }: AgentProps) => {
     const saveTranscript = async () => {
       if (callStatus === CallStatus.FINISHED && messages.length > 0) {
         try {
-          // await fetch("/api/vapi/generate", {
-          //   method: "POST",
-          //   headers: { "Content-Type": "application/json" },
-          //   body: JSON.stringify({
-          //     type,
-          //     userid: userId,
-          //     transcript: messages,
-          //   }),
-          // });
+          await fetch("/api/vapi/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              type,
+              userid: userId,
+              transcript: messages,
+            }),
+          });
           console.log(messages);
         } catch (e) {
           // Optionally handle error
@@ -127,7 +127,6 @@ const Agent = ({ userName, userId, type }: AgentProps) => {
   return (
     <>
       <div className="call-view">
-
         <div className="card-interviewer">
           <div className="avatar">
             <Image
@@ -155,7 +154,6 @@ const Agent = ({ userName, userId, type }: AgentProps) => {
           </div>
           <h3>{userName}</h3>
         </div>
-
       </div>
 
       {messages.length > 0 && (

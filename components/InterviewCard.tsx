@@ -62,8 +62,8 @@ function InterviewCard({
             <Link
               href={
                 feedback
-                  ? `/interviews/${interviewId}/feedback`
-                  : `/interviews/${interviewId}`
+                  ? `/interview/${interviewId}/feedback`
+                  : `/interview/${interviewId}`
               }
             >
               View Details

@@ -1,5 +1,13 @@
 "use server";
 
+// Fetch a single interview by id
+// Interview type inline to avoid import error
+export async function getInterviewById(id: string): Promise<any | null> {
+  const doc = await db.collection("interviews").doc(id).get();
+  if (!doc.exists) return null;
+  return { id: doc.id, ...doc.data() };
+}
+
 import { db, auth } from "@/firebase/admin";
 import { cookies } from "next/headers";
 import { success } from "zod";
@@ -140,24 +148,6 @@ export async function getInterviewByUserId(
     .collection("interviews")
     .where("userId", "==", userId)
     .orderBy("createdAt", "desc")
-    .get();
-
-  return interviews.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Interview[];
-}
-
-export async function getLatestInterviews(
-  params: GetLatestInterviewsParams
-): Promise<Interview[] | null> {
-  const { userId, limit = 20 } = params;
-  const interviews = await db
-    .collection("interviews")
-    .orderBy("createdAt", "desc")
-    .where("userId", "!=", userId)
-    .where("finalized", "==", true)
-    .limit(limit)
     .get();
 
   return interviews.docs.map((doc) => ({

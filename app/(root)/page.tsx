@@ -7,19 +7,16 @@ import InterviewCard from "@/components/InterviewCard";
 import {
   getCurrentUser,
   getInterviewByUserId,
-  getLatestInterviews,
 } from "@/lib/actions/auth.action";
 
 const page = async () => {
   const user = await getCurrentUser();
 
-  const [userInterviews, allInterviews] = await Promise.all([
+  const [userInterviews] = await Promise.all([
     await getInterviewByUserId(user?.id!),
-    await getLatestInterviews({ userId: user?.id! }),
   ]);
 
   const hasPastInterviews = (userInterviews ?? []).length > 0;
-  const hasLatestInterviews = (allInterviews?.length ?? 0) > 0;
 
   return (
     <>
@@ -48,8 +45,12 @@ const page = async () => {
         <h2>Your Interviews</h2>
         <div className="interview-section grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {hasPastInterviews ? (
-            userInterviews?.map((interview) => (
-              <InterviewCard {...interview} key={interview.id} />
+            userInterviews?.map((interview: any) => (
+              <InterviewCard
+                interviewId={interview.id}
+                {...interview}
+                key={interview.id}
+              />
             ))
           ) : (
             <p className="">You haven't taken any interviews yet.</p>

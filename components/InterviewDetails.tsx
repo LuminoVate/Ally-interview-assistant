@@ -24,7 +24,7 @@ const InterviewDetails: React.FC<InterviewDetailsProps> = ({
   type,
 }) => {
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-6 mt-6">
+    <div className="max-w-2xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow p-6 mt-6">
       <div className="flex items-center gap-4 mb-6">
         <Image
           src={coverImage}
@@ -34,19 +34,21 @@ const InterviewDetails: React.FC<InterviewDetailsProps> = ({
           className="rounded-full"
         />
         <div>
-          <h2 className="text-2xl font-bold capitalize">{role} Interview</h2>
+          <h2 className="text-2xl font-bold capitalize text-gray-900 dark:text-white">
+            {role} Interview
+          </h2>
           <div className="flex gap-2 mt-1">
-            <span className="badge bg-blue-100 text-blue-800 px-2 py-1 rounded">
+            <span className="badge bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded">
               {type}
             </span>
-            <span className="badge bg-green-100 text-green-800 px-2 py-1 rounded">
+            <span className="badge bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded">
               {level}
             </span>
-            <span className="badge bg-gray-100 text-gray-800 px-2 py-1 rounded">
+            <span className="badge bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-2 py-1 rounded">
               {finalized ? "Finalized" : "In Progress"}
             </span>
           </div>
-          <div className="text-sm text-gray-500 mt-1">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {new Date(createdAt).toLocaleString()}
           </div>
         </div>
@@ -55,13 +57,17 @@ const InterviewDetails: React.FC<InterviewDetailsProps> = ({
         <DisplayTechIcons techStack={techstack} />
       </div>
       <div>
-        <h3 className="font-semibold mb-2">Transcript</h3>
+        <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
+          Transcript
+        </h3>
         <div className="space-y-2">
           {transcript.map((msg, idx) => (
-            <div key={idx} className="text-sm text-gray-700">
+            <div key={idx} className="text-sm text-gray-700 dark:text-gray-200">
               <span
                 className={`font-semibold capitalize ${
-                  msg.role === "assistant" ? "text-blue-700" : "text-green-700"
+                  msg.role === "assistant"
+                    ? "text-blue-700 dark:text-blue-300"
+                    : "text-green-700 dark:text-green-300"
                 }`}
               >
                 {msg.role}:

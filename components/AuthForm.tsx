@@ -30,6 +30,7 @@ const authFormSchema = (type: FormType) => {
 const AuthForm = ({ type }: { type: FormType }) => {
   const formSchema = authFormSchema(type);
   const router = useRouter();
+  const [loading, setLoading] = React.useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,6 +42,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     try {
       if (isSignIn) {
         const { email, password } = values;
@@ -96,9 +98,13 @@ const AuthForm = ({ type }: { type: FormType }) => {
         e.message?.toLowerCase().includes("invalid credential")
       ) {
         toast.error("Invalid email or password. Please try again.");
+      } else if (e.code === "auth/email-already-in-use") {
+        toast.error("Email already in use. Please try another.");
       } else {
         toast.error(e.message || "An error occurred. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -142,14 +148,23 @@ const AuthForm = ({ type }: { type: FormType }) => {
             />
 
             <Button className="btn cursor-pointer" type="submit">
-              {isSignIn ? "Sign In " : "Create an Account "}
+              {isSignIn
+                ? loading
+                  ? "Loading..."
+                  : "Sign In "
+                : loading
+                ? "Creating..... "
+                : "Create an Account "}
             </Button>
           </form>
           <p className="text-center">
             {isSignIn
               ? " Already have an account? "
               : " Don't have an account? "}
-            <Link href={isSignIn ? "/sign-up" : "/sign-in"}>
+            <Link
+              className="underline"
+              href={isSignIn ? "/sign-up" : "/sign-in"}
+            >
               {isSignIn ? " Register" : " Login"}
             </Link>
           </p>
